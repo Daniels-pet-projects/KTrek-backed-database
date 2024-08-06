@@ -6,7 +6,9 @@
 
 1. `npm i`
 
-2. `npm run start`
+2. `cp .env.template .env`
+
+3. `npm run start`
 
 ### Дополнительный функционал
 
