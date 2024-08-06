@@ -94,6 +94,7 @@ CREATE TABLE "questions" (
     "id" TEXT NOT NULL,
     "question_text" TEXT NOT NULL,
     "answer_type_id" TEXT,
+    "test_id" TEXT,
     "correct_answer_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
@@ -199,6 +200,9 @@ ALTER TABLE "tests" ADD CONSTRAINT "tests_lesson_id_fkey" FOREIGN KEY ("lesson_i
 
 -- AddForeignKey
 ALTER TABLE "questions" ADD CONSTRAINT "questions_answer_type_id_fkey" FOREIGN KEY ("answer_type_id") REFERENCES "answer_types"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "questions" ADD CONSTRAINT "questions_test_id_fkey" FOREIGN KEY ("test_id") REFERENCES "tests"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "questions" ADD CONSTRAINT "questions_correct_answer_id_fkey" FOREIGN KEY ("correct_answer_id") REFERENCES "answers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
