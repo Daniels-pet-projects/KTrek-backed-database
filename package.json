@@ -1,8 +1,8 @@
 {
   "name": "ktrek-backed-database",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "",
   "scripts": {
     "start": "npm run stop && docker compose up --build -d && sleep 5 && npx prisma db push",
     "stop": "docker compose stop",
@@ -12,10 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^22.1.0",
-    "prisma": "^5.17.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "prisma": "^5.17.0"
   },
   "dependencies": {
     "@prisma/client": "^5.17.0"
