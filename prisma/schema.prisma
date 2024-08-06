@@ -105,6 +105,7 @@ model Tests {
   lesson      Lessons        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   lessonId    String         @unique @map("lesson_id")
   attemptPass AttemptsPass[]
+  questions   Questions[]
 
   @@map("tests")
 }
@@ -114,6 +115,8 @@ model Questions {
   questionText    String        @map("question_text")
   answerType      AnswerType?   @relation(fields: [answerTypeId], references: [id], onDelete: Cascade)
   answerTypeId    String?       @map("answer_type_id")
+  test            Tests?        @relation(fields: [testId], references: [id], onDelete: Cascade)
+  testId          String?       @map("test_id")
   correctAnswer   Answers       @relation("CorrectAnswer", fields: [correctAnswerId], references: [id], onDelete: Cascade)
   correctAnswerId String        @unique @map("correct_answer_id")
   createdAt       DateTime?     @default(now()) @map("created_at")
