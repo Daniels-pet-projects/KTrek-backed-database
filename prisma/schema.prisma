@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id           String         @id @default(uuid())
+  showedId     String         @unique @map("showed_id")
+  email        String         @unique
+  firstName    String         @map("first_name")
+  lastName     String         @map("last_name")
+  middleName   String?        @default("") @map("middle_name")
+  phoneNumber  String         @unique @map("phone_number")
+  createdAt    DateTime?      @default(now()) @map("created_at")
+  updatedAt    DateTime?      @updatedAt @map("updated_at")
+  role         Roles          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId       String         @map("role_id")
+  password     Passwords?
+  courses      Courses[]
+  enrollments  Enrollments[]
+  attemptsPass AttemptsPass[]
+
+  @@map("users")
+}
+
+model Roles {
+  id    String  @id @default(uuid())
+  label String  @unique
+  users Users[]
+
+  @@map("roles")
+}
+
+model Passwords {
+  id     String @id @default(uuid())
+  salt   String
+  hash   String
+  user   Users  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @map("user_id")
+
+  @@unique([salt, hash])
+  @@map("passwords")
+}
+
+model Courses {
+  id          String        @id @default(uuid())
+  author      Users?        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String?       @map("author_id")
+  title       String
+  description String
+  createdAt   DateTime?     @default(now()) @map("created_at")
+  updatedAt   DateTime?     @updatedAt @map("updated_at")
+  lessons     Lessons[]
+  enrollments Enrollments[]
+
+  @@map("courses")
+}
+
+model Lessons {
+  id          String    @id @default(uuid())
+  course      Courses?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId    String?   @map("course_id")
+  title       String
+  description String
+  content     String
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt @map("updated_at")
+  test        Tests?
+
+  @@map("lessons")
+}
+
+model Enrollments {
+  id               String             @id @default(uuid())
+  joinAt           DateTime?          @default(now()) @map("join_at")
+  completedPercent Int                @map("completed_percent")
+  user             Users?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String?            @map("user_id")
+  course           Courses?           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId         String?            @map("course_id")
+  status           StatusEnrollments? @relation(fields: [statusId], references: [id], onDelete: Cascade)
+  statusId         String?            @map("status_id")
+
+  @@map("enrollments")
+}
+
+model StatusEnrollments {
+  id          String        @id @default(uuid())
+  label       String        @unique
+  enrollments Enrollments[]
+
+  @@map("status_enrollments")
+}
+
+model Tests {
+  id          String         @id @default(uuid())
+  title       String
+  description String
+  createdAt   DateTime?      @default(now()) @map("created_at")
+  updatedAt   DateTime?      @updatedAt @map("updated_at")
+  lesson      Lessons        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId    String         @unique @map("lesson_id")
+  attemptPass AttemptsPass[]
+  questions   Questions[]
+
+  @@map("tests")
+}
+
+model Questions {
+  id              String        @id @default(uuid())
+  questionText    String        @map("question_text")
+  answerType      AnswerType?   @relation(fields: [answerTypeId], references: [id], onDelete: Cascade)
+  answerTypeId    String?       @map("answer_type_id")
+  test            Tests?        @relation(fields: [testId], references: [id], onDelete: Cascade)
+  testId          String?       @map("test_id")
+  correctAnswer   Answers       @relation("CorrectAnswer", fields: [correctAnswerId], references: [id], onDelete: Cascade)
+  correctAnswerId String        @unique @map("correct_answer_id")
+  createdAt       DateTime?     @default(now()) @map("created_at")
+  updatedAt       DateTime?     @updatedAt @map("updated_at")
+  answers         Answers[]
+  userAnswers     UserAnswers[]
+
+  @@map("questions")
+}
+
+model AnswerType {
+  id        String      @id @default(uuid())
+  label     String      @unique
+  questions Questions[]
+
+  @@map("answer_types")
+}
+
+model Answers {
+  id            String     @id @default(uuid())
+  answerText    String     @map("answer_text")
+  createdAt     DateTime?  @default(now()) @map("created_at")
+  updatedAt     DateTime?  @updatedAt @map("updated_at")
+  question      Questions? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId    String?    @map("question_id")
+  correctAnswer Questions? @relation("CorrectAnswer")
+
+  @@map("answers")
+}
+
+model UserAnswers {
+  id            String        @id @default(uuid())
+  question      Questions?    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId    String?       @map("questions_id")
+  attemptPass   AttemptsPass? @relation(fields: [attemptPassId], references: [id], onDelete: Cascade)
+  attemptPassId String?       @map("attempt_pass_id")
+  answerText    String        @map("answer_text")
+  isCorrect     Boolean       @default(false) @map("is_correct")
+  createdAt     DateTime?     @default(now()) @map("created_at")
+
+  @@map("user_answers")
+}
+
+model AttemptsPass {
+  id          String        @id @default(uuid())
+  test        Tests?        @relation(fields: [testId], references: [id], onDelete: Cascade)
+  testId      String?       @map("test_id")
+  user        Users?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String?       @map("user_id")
+  attempt     Int
+  createdAt   DateTime?     @default(now()) @map("created_at")
+  userAnswers UserAnswers[]
+
+  @@map("attempts_pass")
+}
