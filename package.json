@@ -4,9 +4,9 @@
   "description": "",
   "main": "",
   "scripts": {
-    "start": "npm run stop && docker compose up --build -d && sleep 5 && npx prisma db push",
-    "stop": "docker compose stop",
-    "clear": "docker compose down -v"
+    "start": "npm run stop && docker network create ktrek && docker compose up --build -d && sleep 5 && npx prisma db push",
+    "stop": "docker compose stop && docker network rm ktrek",
+    "remove": "docker compose down -v --remove-orphans && docker network rm ktrek"
   },
   "keywords": [],
   "author": "",
