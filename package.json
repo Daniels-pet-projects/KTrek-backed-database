@@ -4,9 +4,11 @@
   "description": "",
   "main": "",
   "scripts": {
-    "start": "npm run stop && docker network create ktrek && docker compose up --build -d && sleep 5 && npx prisma db push",
-    "stop": "docker compose stop && docker network rm ktrek",
-    "remove": "docker compose down -v --remove-orphans && docker network rm ktrek"
+    "network:create": "docker network inspect ktrek >/dev/null 2>&1 || docker network create ktrek",
+    "network:remove": "docker network rm ktrek || true",
+    "start": "npm run stop && npm run network:create && docker compose up --build -d && sleep 5 && npx prisma db push",
+    "stop": "docker compose stop || true",
+    "remove": "docker compose down -v --remove-orphans && npm run network:remove"
   },
   "keywords": [],
   "author": "",
