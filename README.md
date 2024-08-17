@@ -27,5 +27,5 @@ npm run stop
 Удаление(можно запускать при работающей бд)
 
 ```bash
-npm run clear
+npm run remove
 ```

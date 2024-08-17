@@ -14,6 +14,12 @@ services:
     restart: always
     volumes:
       - ktrek_database:/var/lib/postgresql/data
+    networks:
+      - ktrek
 
 volumes:
   ktrek_database:
+
+networks:
+  ktrek:
+    external: true
